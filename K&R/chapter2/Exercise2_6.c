@@ -47,16 +47,16 @@ int main() {
 int setbits(int x, int p, int n, int y) {
     int mask_x, mask_y;
 
-    mask_y = ~(~0 << n);
-    mask_y = mask_y & y;
-    mask_y = mask_y << p;
+    mask_y = ~(~0 << n); // 0001111
+    mask_y = mask_y & y; // 0000100
+    mask_y = mask_y << p; // 0100000
 
-    mask_x = ~(~0 << n);
-    mask_x = mask_x << p;
-    mask_x = ~mask_x;
-    x = x & mask_x;
+    mask_x = ~(~0 << n); // 0001111
+    mask_x = mask_x << p; // 1111000
+    mask_x = ~mask_x; // 0000111
+    x = x & mask_x; // 1011011 & 0000111 = 0000011
 
-    x = x | mask_y;
+    x = x | mask_y; // 0000011 | 0100000 = 0100011
 
     return x;
 }

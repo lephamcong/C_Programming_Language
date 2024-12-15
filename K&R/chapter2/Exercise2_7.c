@@ -44,6 +44,6 @@ int main() {
 int invert(int x, int p, int n) {
     unsigned int mask;
 
-    mask = ~(~0U << n) << p;
-    return x ^ mask;
+    mask = ~(~0U << n) << p; // 1111000
+    return x ^ mask; // 1011011 ^ 1111000 = 0100011
 }

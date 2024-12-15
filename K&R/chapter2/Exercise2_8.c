@@ -44,14 +44,15 @@ int main() {
 }
 
 int rightrot(int x, int n) {
+
     int mask;
   
-    mask = ((1 << n) - 1) & x;  
+    mask = ((1 << n) - 1) & x; // 0000111 & 1011011 = 0000011
 
-    x = x >> n;
+    x = x >> n; // 1011011 >> 3 = 0001011
 
-    mask = mask << (7 - n); 
+    mask = mask << (7 - n); // 0000011 << 4 = 0110000
 
-    x = x | mask;
+    x = x | mask; // 0001011 | 0110000 = 0111011
     return x;
 }
