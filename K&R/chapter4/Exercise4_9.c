@@ -1,10 +1,10 @@
 /*
-Exercise 4-6. 
-    Add commands for handling variables. (It's easy to provide twenty-six variables
-    with single-letter names.) Add a variable for the most recently printed value. 
+Exercise 4-9. 
+    Our getch and ungetch do not handle a pushed-back EOF correctly. Decide
+    what their properties ought to be if an EOF is pushed back, then implement your design. 
 
-Compile: gcc Exercise4_6.c -o Exercise4_6 -lm
-Run: ./Exercise4_6
+Compile: gcc Exercise4_9.c -o Exercise4_9 -lm
+Run: ./Exercise4_9
 */
 
 #include <stdio.h>
@@ -33,6 +33,8 @@ int bufp = 0; // next free position in buf
 
 int sp = 0; // next free stack position
 double val[MAXVAL]; // value stack
+
+int eof_flag = 0;
 
 
 int main() {
@@ -224,11 +226,21 @@ int getop(char s[]) {
 }
 
 int getch(void) {
+    if (eof_flag) {
+        eof_flag = 0;
+        return EOF;
+    }
     return (bufp > 0) ? buf[--bufp] : getchar();
 }
 
 void ungetch(int c) {
-    if (bufp >= BUFSIZE) {
+    if ( c == EOF) {
+        if (eof_flag) {
+            printf("ungetch: too many EOF\n");
+        } else {
+            eof_flag = 1;
+        }
+    } else if (bufp >= BUFSIZE) {
         printf("ungetch: too many characters\n");
     } else {
         buf[bufp++] = c;

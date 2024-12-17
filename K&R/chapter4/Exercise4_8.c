@@ -1,21 +1,22 @@
 /*
-Exercise 4-6. 
-    Add commands for handling variables. (It's easy to provide twenty-six variables
-    with single-letter names.) Add a variable for the most recently printed value. 
+Exercise 4-8. 
+    Suppose that there will never be more than one character of pushback. Modify
+    getch and ungetch accordingly.
 
-Compile: gcc Exercise4_6.c -o Exercise4_6 -lm
-Run: ./Exercise4_6
+Compile: gcc Exercise4_8.c -o Exercise4_8 -lm
+Run: ./Exercise4_8
 */
 
 #include <stdio.h>
 #include <stdlib.h> // for atof()
 #include <ctype.h> // for isdigit()
 #include <math.h> // for sin(), exp(), pow()
+#include <string.h> // for strlen()
 
 #define MAXOP 100 // max size of operand or operator
 #define NUMBER '0' // signal that a number was found
 #define MAXVAL 100 // maximum depth of val stack
-#define BUFSIZE 100 // buffer for ungetch
+#define BUFSIZE 1 // buffer for ungetch
 #define VARIABLE '1' // signal that a variable was found
 
 int getch(void);
@@ -27,13 +28,13 @@ void print_top(void);
 void duplicate_top(void);
 void swap_top_two(void);
 void clear_stack(void);
+void ungets(char []);
 
 char buf[BUFSIZE]; // buffer for ungetch
 int bufp = 0; // next free position in buf
 
 int sp = 0; // next free stack position
 double val[MAXVAL]; // value stack
-
 
 int main() {
     int type;
@@ -42,6 +43,10 @@ int main() {
     double variables[26] = {-1};
     double last_printed = -1;
     char var = 1;
+
+    // printf("Testing ungets() function:\n");
+    
+    // ungets("15 A =\n7 B =\nA B +\n");
 
     while ((type = getop(s)) != EOF) {
         switch (type) {
@@ -124,7 +129,6 @@ int main() {
     return 0;
 }
 
-
 /* push: push f onto value stack */
 void push(double f) {
     if (sp < MAXVAL) {
@@ -143,6 +147,7 @@ double pop(void) {
         return 0.0;
     }
 }
+
 /* print_top: print top element without popping */
 void print_top(void) {
     if (sp > 0) {
@@ -152,7 +157,7 @@ void print_top(void) {
     }
 }
 
-/*  */
+/* duplicate_top: duplicate the top element */
 void duplicate_top(void) {
     if (sp > 0 && sp < MAXVAL) {
         val[sp] = val[sp - 1];
@@ -224,7 +229,11 @@ int getop(char s[]) {
 }
 
 int getch(void) {
-    return (bufp > 0) ? buf[--bufp] : getchar();
+    if (bufp > 0) {
+        return buf[--bufp]; 
+    } else {
+        return getchar(); 
+    }
 }
 
 void ungetch(int c) {
@@ -232,5 +241,14 @@ void ungetch(int c) {
         printf("ungetch: too many characters\n");
     } else {
         buf[bufp++] = c;
+    }
+}
+
+/* ungets: push back entire string onto input */
+void ungets(char s[]) {
+    int i = 0;
+    while (s[i] != '\0') {
+        ungetch(s[i]); 
+        i++;
     }
 }

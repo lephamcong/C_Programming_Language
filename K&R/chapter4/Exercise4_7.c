@@ -1,16 +1,21 @@
 /*
-Exercise 4-6. 
-    Add commands for handling variables. (It's easy to provide twenty-six variables
-    with single-letter names.) Add a variable for the most recently printed value. 
+Exercise 4-7. 
+    Write a routine ungets(s) that will push back an entire string onto the input.
+    Should ungets know about buf and bufp, or should it just use ungetch? 
+    
+    Answer:
+        ungets should just use ungetch. Don't need to know about buf and bufp.
+        It help ungets to focus on its task: pushing back an entire
 
-Compile: gcc Exercise4_6.c -o Exercise4_6 -lm
-Run: ./Exercise4_6
+Compile: gcc Exercise4_7.c -o Exercise4_7 -lm
+Run: ./Exercise4_7
 */
 
 #include <stdio.h>
 #include <stdlib.h> // for atof()
 #include <ctype.h> // for isdigit()
 #include <math.h> // for sin(), exp(), pow()
+#include <string.h> // for strlen()
 
 #define MAXOP 100 // max size of operand or operator
 #define NUMBER '0' // signal that a number was found
@@ -27,6 +32,7 @@ void print_top(void);
 void duplicate_top(void);
 void swap_top_two(void);
 void clear_stack(void);
+void ungets(char []);
 
 char buf[BUFSIZE]; // buffer for ungetch
 int bufp = 0; // next free position in buf
@@ -42,6 +48,14 @@ int main() {
     double variables[26] = {-1};
     double last_printed = -1;
     char var = 1;
+
+    printf("Testing ungets() function:\n");
+    
+    // ungets("5 3 * 2 +\n");
+
+    // ungets("5 3 * 2 +\n");
+    ungets("5 A =\n");
+
 
     while ((type = getop(s)) != EOF) {
         switch (type) {
@@ -124,7 +138,6 @@ int main() {
     return 0;
 }
 
-
 /* push: push f onto value stack */
 void push(double f) {
     if (sp < MAXVAL) {
@@ -143,6 +156,7 @@ double pop(void) {
         return 0.0;
     }
 }
+
 /* print_top: print top element without popping */
 void print_top(void) {
     if (sp > 0) {
@@ -232,5 +246,13 @@ void ungetch(int c) {
         printf("ungetch: too many characters\n");
     } else {
         buf[bufp++] = c;
+    }
+}
+
+/* ungets: push back entire string onto input */
+void ungets(char s[]) {
+    int len = strlen(s);
+    while (len > 0) {
+        ungetch(s[--len]); // push back characters in reverse order
     }
 }
