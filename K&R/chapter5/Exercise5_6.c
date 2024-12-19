@@ -137,7 +137,6 @@ void reverse(char *s) {
 
 /* strindex: return index of t in s, -1 if none */
 int strindex(char *s, char *t) {
-    // char *s_start = s;
     for (int i = 0; *s != '\0'; s++, i++) {
         char *s_temp = s;
         char *t_temp = t;
